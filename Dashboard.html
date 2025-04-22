@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Attendance Links</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f2f5;
+      padding: 40px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    .box-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .box-link {
+      display: block;
+      text-decoration: none;
+      padding: 25px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      color: #007bff;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .box-link:hover {
+      background-color: #007bff;
+      color: white;
+      transform: translateY(-3px);
+    }
+  </style>
+
+  <style>
+    .logout-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      font-size: 14px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  
+    .logout-btn:hover {
+      background-color: #c82333;
+    }
+  </style>
+</head>
+<body>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  <h1>Attendance Sections</h1>
+
+  <div class="box-container">
+    <a href="/A1.html" class="box-link">A1 Attendance</a>
+    <a href="/A2.html" class="box-link">A2 Attendance</a>
+    <a href="/A3.html" class="box-link">A3 Attendance</a>
+    <a href="/A4.html" class="box-link">A4 Attendance</a>
+    <a href="/B1.html" class="box-link">B1 Attendance</a>
+    <a href="/B2.html" class="box-link">B2 Attendance</a>
+    <a href="/B3.html" class="box-link">B3 Attendance</a>
+    <a href="/B5.html" class="box-link">B5 Attendance</a>
+  </div>
+
+  <script>
+    // Disable Right Click
+    document.addEventListener('contextmenu', event => event.preventDefault());
+  
+    // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+    document.onkeydown = function (e) {
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J")) ||
+        (e.ctrlKey && e.key === "U")
+      ) {
+        return false;
+      }
+    };
+  </script>
+  <!-- dashboard.html -->
+<script>
+    // Check login status
+    if (sessionStorage.getItem("isLoggedIn") !== "true") {
+      // Redirect back to login page
+      window.location.href = "index.html";
+    }
+  </script>
+  
+  
+  
+  <script>
+    function logout() {
+      sessionStorage.removeItem("isLoggedIn");
+      window.location.href = "index.html";
+    }
+  </script>
+  
+</body>
+</html>

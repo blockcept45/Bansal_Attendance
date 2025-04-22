@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Daily Attendance</title>
+  <style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 8px;
+    }
+  </style>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 25px 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border-radius: 12px;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    input[type="date"] {
+      padding: 10px;
+      width: 200px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px 15px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #0077cc;
+      color: #ffffff;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    select {
+      padding: 6px 10px;
+      font-size: 14px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    button[type="submit"] {
+      display: block;
+      margin: 20px auto 0;
+      padding: 12px 30px;
+      font-size: 16px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #218838;
+    }
+
+    @media (max-width: 768px) {
+      th, td {
+        font-size: 14px;
+        padding: 8px;
+      }
+
+      input[type="date"] {
+        width: 100%;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+      }
+    }
+  </style>
+
+  
+  <style>
+    .logout-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      font-size: 14px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  
+    .logout-btn:hover {
+      background-color: #c82333;
+    }
+  </style>
+</head>
+<body>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+    <div class="container">
+        <h3>Section -: B3</h3>
+        <h2>Mark Attendance</h2>
+        <label for="date">Select Date:</label>
+        <input type="date" id="date" required>
+    
+        <form id="attendanceForm">
+          <table id="studentTable">
+            <thead>
+              <tr>
+                <th>Student Name</th>
+                <th>Enrollment</th>
+                <th>Attendance</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <br>
+          <button type="submit">Submit Attendance</button>
+        </form>
+      </div>
+
+  <script>
+    const sheetURL = 'https://script.google.com/macros/s/AKfycbyntwRLO8AiFbzflqfo00KivDTXAKpbg0PdYHqJrejpZVVFOcA_CP-fI5K5wQB57zQO/exec';
+
+    // Fetch student data
+    fetch(sheetURL)
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.querySelector("#studentTable tbody");
+        data.forEach(student => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${student[0]}</td>
+            <td>${student[1]}</td>
+            <td>
+              <select name="attendance-${student[1]}">
+                <option value="Present">Present</option>
+                <option value="Absent">Absent</option>
+              </select>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+
+    // Submit attendance
+    document.getElementById('attendanceForm').addEventListener('submit', e => {
+      e.preventDefault();
+
+      const date = document.getElementById('date').value;
+      if (!date) return alert('Please select a date.');
+
+      const selects = document.querySelectorAll('select');
+      const attendance = {};
+
+      selects.forEach(sel => {
+        const enroll = sel.name.split('-')[1];
+        attendance[enroll] = sel.value;
+      });
+
+      fetch(sheetURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `date=${date}&attendance=${encodeURIComponent(JSON.stringify(attendance))}`
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === 'success') {
+          alert('Attendance submitted!');
+        } else {
+          alert('Error submitting attendance.');
+        }
+      });
+    });
+  </script>
+  <script>
+    // Disable Right Click
+    document.addEventListener('contextmenu', event => event.preventDefault());
+  
+    // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+    document.onkeydown = function (e) {
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J")) ||
+        (e.ctrlKey && e.key === "U")
+      ) {
+        return false;
+      }
+    };
+  </script>
+  
+
+   <!-- dashboard.html -->
+<script>
+    // Check login status
+    if (sessionStorage.getItem("isLoggedIn") !== "true") {
+      // Redirect back to login page
+      window.location.href = "index.html";
+    }
+  </script>
+  
+ 
+  
+  <script>
+    function logout() {
+      sessionStorage.removeItem("isLoggedIn");
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
